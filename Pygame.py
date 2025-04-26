@@ -56,7 +56,7 @@ BG = pygame.transform.scale(pygame.image.load("photos/images.jpg"), (WIDTH,HEIGH
 
 def draw(player):
     WIN.blit(BG, (0,0))
-    pygame.draw.rect(WIN, (255,255,0), player )
+    pygame.draw.rect(WIN, (255,255,0), player ) #ХУЙНЯ ТВОЙ КОД!!!
     pygame.display.update()
 PLAYER_WIDTH = 40
 PLAYER_HEIGHT = 60
