@@ -1,22 +1,25 @@
 import pygame
 import sys
 
-# Инициализация Pygame
 pygame.init()
 
-# Настройки экрана
+FPS = 60
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("FEFU crushers")
+pygame.display.set_caption("Slime crushers")
 
-# Цвета
+# Загрузка и растягивание фонового изображения
+def load_background(path):
+    image = pygame.image.load(path).convert()
+    return pygame.transform.scale(image, (WIDTH, HEIGHT))
+    
+background = load_background("pygame python project/image/main_menu_bg.png")  
+
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-GRAY = (100, 100, 100)
 HOVER_COLOR = (150, 150, 255)
 
-# Шрифты
-title_font = pygame.font.SysFont('arial', 64)
+title_font = pygame.font.Font("pygame python project/font/zettameter.ttf", 64)
 button_font = pygame.font.SysFont('arial', 32)
 
 class Button:
@@ -47,15 +50,13 @@ class Button:
 
 # Функции действий кнопок
 def start_game():
-    print("play")
-    # Здесь можно перейти к игровому экрану
-    # game_loop()
+    print("Play!")
 
 def quit_game():
     pygame.quit()
     sys.exit()
 
-# Создание кнопок (теперь только две)
+# Создание кнопок
 buttons = [
     Button(WIDTH//2 - 100, 250, 200, 50, "Start game", start_game),
     Button(WIDTH//2 - 100, 320, 200, 50, "Quit", quit_game)
@@ -83,11 +84,11 @@ def main_menu():
         for button in buttons:
             button.check_hover(mouse_pos)
         
-        # Отрисовка
-        screen.fill(GRAY)
+        # Отрисовка - сначала фон
+        screen.blit(background, (0, 0))
         
         # Заголовок
-        title_text = title_font.render("FEFU Crushers", True, WHITE)
+        title_text = title_font.render("Slime crushers", True, WHITE)
         title_rect = title_text.get_rect(center=(WIDTH//2, 150))
         screen.blit(title_text, title_rect)
         
@@ -96,7 +97,7 @@ def main_menu():
             button.draw(screen)
         
         pygame.display.flip()
-        clock.tick(60)
+        clock.tick(FPS)
     
     pygame.quit()
     sys.exit()
