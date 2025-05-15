@@ -3,8 +3,14 @@ import sys
 
 pygame.init()
 
+# Константы игры
 FPS = 60
 WIDTH, HEIGHT = 800, 600
+GRAVITY = 0.5
+JUMP_FORCE = -12
+PLAYER_SPEED = 5
+FLOOR_HEIGHT = 50
+
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Slime crushers")
 
@@ -15,10 +21,14 @@ def load_background(path):
     
 background = load_background("pygame python project/image/main_menu_bg.png")  
 
+# Цвета
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 HOVER_COLOR = (150, 150, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)  # Цвет пола
 
+# Шрифты
 title_font = pygame.font.Font("pygame python project/font/zettameter.ttf", 64)
 button_font = pygame.font.SysFont('arial', 32)
 
@@ -48,9 +58,85 @@ class Button:
                 return self.action()
         return None
 
+class Player:
+    def __init__(self, x, y, size=50):
+        self.rect = pygame.Rect(x, y, size, size)
+        self.speed = PLAYER_SPEED
+        self.color = RED
+        self.velocity_y = 0
+        self.jumping = False
+        
+    def move(self, dx):
+        self.rect.x += dx * self.speed
+        # Ограничение движения по горизонтали
+        self.rect.x = max(0, min(WIDTH - self.rect.width, self.rect.x))
+        
+    def apply_gravity(self, floor_y):
+        self.velocity_y += GRAVITY
+        self.rect.y += self.velocity_y
+        
+        # Проверка столкновения с полом
+        if self.rect.bottom >= floor_y:
+            self.rect.bottom = floor_y
+            self.velocity_y = 0
+            self.jumping = False
+            
+    def jump(self):
+        if not self.jumping:
+            self.velocity_y = JUMP_FORCE
+            self.jumping = True
+            
+    def draw(self, surface):
+        pygame.draw.rect(surface, self.color, self.rect)
+
+def game_loop():
+    clock = pygame.time.Clock()
+    player = Player(WIDTH // 2, HEIGHT // 2)
+    
+    # Параметры пола
+    floor_y = HEIGHT - FLOOR_HEIGHT
+    
+    running = True
+    
+    while running:
+        # Обработка событий
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return  # Возврат в меню
+                if event.key == pygame.K_SPACE:
+                    player.jump()
+        
+        # Управление
+        keys = pygame.key.get_pressed()
+        dx = 0
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+            dx -= 1
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            dx += 1
+            
+        player.move(dx)
+        player.apply_gravity(floor_y)
+        
+        # Отрисовка
+        screen.fill(BLACK)
+        
+        # Рисуем пол
+        pygame.draw.rect(screen, GREEN, (0, floor_y, WIDTH, FLOOR_HEIGHT))
+        
+        player.draw(screen)
+        
+        pygame.display.flip()
+        clock.tick(FPS)
+
 # Функции действий кнопок
 def start_game():
     print("Play!")
+    game_loop()
 
 def quit_game():
     pygame.quit()
@@ -69,12 +155,11 @@ def main_menu():
     
     while running:
         mouse_pos = pygame.mouse.get_pos()
-        
         # Обработка событий
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            
+                
             for button in buttons:
                 result = button.handle_event(event)
                 if result is not None:
