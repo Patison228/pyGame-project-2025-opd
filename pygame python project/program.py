@@ -23,9 +23,9 @@ def load_background(path):
 background = load_background("pygame python project/image/main_menu_bg.png")  
 
 # Цвета
+COLOR_OF_SKY = (135, 206, 235)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-COLOR_OF_SKY = (135, 206, 235)
 HOVER_COLOR = (150, 150, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)  # Цвет пола
@@ -61,13 +61,14 @@ class Button:
         return None
 
 class Player:
-    def __init__(self, x, y, size = 50):
+    def __init__(self, x, y, size=50, character_type = "player_1"):
         self.rect = pygame.Rect(x, y, size, size)
         self.speed = PLAYER_SPEED
         self.color = RED
         self.velocity_y = 0
         self.jumping = False
         self.direction = 1  # 1 - вправо, -1 - влево
+        self.character_type = character_type
         self.sprites = {
             'idle': None,
             'jump': None
@@ -76,17 +77,22 @@ class Player:
         self.load_sprites()
         
     def load_sprites(self):
-            # Попытка загрузить спрайты слайма
         try:
-            # Замените эти пути на реальные пути к вашим изображениям
-            idle_img = pygame.image.load("pygame python project/image/slime_sprite.png").convert_alpha()
-            jump_img = pygame.image.load("pygame python project/image/slime_sprite.png").convert_alpha()
+            if self.character_type == "player_1":
+                idle_img = pygame.image.load("pygame python project/image/slime_sprite_green.png").convert_alpha()
+                jump_img = pygame.image.load("pygame python project/image/slime_sprite_green.png").convert_alpha()
+            elif self.character_type == "player_2":
+                idle_img = pygame.image.load("pygame python project/image/slime_sprite_orange.png").convert_alpha()
+                jump_img = pygame.image.load("pygame python project/image/slime_sprite_orange.png").convert_alpha()
+            else:
+                # Если тип персонажа не распознан, используем стандартный квадрат
+                return
             
-            # Масштабируем спрайты под размер игрока
             self.sprites['idle'] = pygame.transform.scale(idle_img, (self.rect.width, self.rect.height))
             self.sprites['jump'] = pygame.transform.scale(jump_img, (self.rect.width, self.rect.height))
             self.current_sprite = self.sprites['idle']
         except:
+            print(f"Не удалось загрузить спрайты для {self.character_type}. Будет использован стандартный квадрат.")
             self.current_sprite = None
     
     def move(self, dx):
@@ -129,7 +135,8 @@ class Player:
 
 def game_loop():
     clock = pygame.time.Clock()
-    player = Player(WIDTH // 2, HEIGHT // 2)
+    player1 = Player(WIDTH // 2 - 100, HEIGHT // 2, 50, "player_1")
+    player2 = Player(WIDTH // 2 + 100, HEIGHT // 2, 50, "player_2")
     
     # Параметры пола
     floor_y = HEIGHT - FLOOR_HEIGHT
@@ -147,18 +154,31 @@ def game_loop():
                 if event.key == pygame.K_ESCAPE:
                     return  # Возврат в меню
                 if event.key == pygame.K_SPACE:
-                    player.jump()
+                    player1.jump()
+                if event.key == pygame.K_UP:
+                    player2.jump()
         
         # Управление
         keys = pygame.key.get_pressed()
-        dx = 0
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            dx -= 1
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            dx += 1
-            
-        player.move(dx)
-        player.apply_gravity(floor_y)
+        
+        # Управление для первого игрока (WASD + Space)
+        dx1 = 0
+        if keys[pygame.K_a]:
+            dx1 -= 1
+        if keys[pygame.K_d]:
+            dx1 += 1
+        player1.move(dx1)
+        
+        # Управление для второго игрока (Стрелки)
+        dx2 = 0
+        if keys[pygame.K_LEFT]:
+            dx2 -= 1
+        if keys[pygame.K_RIGHT]:
+            dx2 += 1
+        player2.move(dx2)
+        
+        player1.apply_gravity(floor_y)
+        player2.apply_gravity(floor_y)
         
         # Отрисовка
         screen.fill(COLOR_OF_SKY)
@@ -166,7 +186,8 @@ def game_loop():
         # Рисуем пол
         pygame.draw.rect(screen, GREEN, (0, floor_y, WIDTH, FLOOR_HEIGHT))
         
-        player.draw(screen)
+        player1.draw(screen)
+        player2.draw(screen)
         
         pygame.display.flip()
         clock.tick(FPS)
