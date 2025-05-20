@@ -1,5 +1,6 @@
 import pygame
 import sys
+import os
 
 pygame.init()
 
@@ -24,6 +25,7 @@ background = load_background("pygame python project/image/main_menu_bg.png")
 # Цвета
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+COLOR_OF_SKY = (135, 206, 235)
 HOVER_COLOR = (150, 150, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)  # Цвет пола
@@ -59,14 +61,37 @@ class Button:
         return None
 
 class Player:
-    def __init__(self, x, y, size=50):
+    def __init__(self, x, y, size = 50):
         self.rect = pygame.Rect(x, y, size, size)
         self.speed = PLAYER_SPEED
         self.color = RED
         self.velocity_y = 0
         self.jumping = False
+        self.direction = 1  # 1 - вправо, -1 - влево
+        self.sprites = {
+            'idle': None,
+            'jump': None
+        }
+        self.current_sprite = None
+        self.load_sprites()
         
+    def load_sprites(self):
+            # Попытка загрузить спрайты слайма
+        try:
+            # Замените эти пути на реальные пути к вашим изображениям
+            idle_img = pygame.image.load("pygame python project/image/slime_sprite.png").convert_alpha()
+            jump_img = pygame.image.load("pygame python project/image/slime_sprite.png").convert_alpha()
+            
+            # Масштабируем спрайты под размер игрока
+            self.sprites['idle'] = pygame.transform.scale(idle_img, (self.rect.width, self.rect.height))
+            self.sprites['jump'] = pygame.transform.scale(jump_img, (self.rect.width, self.rect.height))
+            self.current_sprite = self.sprites['idle']
+        except:
+            self.current_sprite = None
+    
     def move(self, dx):
+        if dx != 0:
+            self.direction = 1 if dx > 0 else -1
         self.rect.x += dx * self.speed
         # Ограничение движения по горизонтали
         self.rect.x = max(0, min(WIDTH - self.rect.width, self.rect.x))
@@ -74,6 +99,12 @@ class Player:
     def apply_gravity(self, floor_y):
         self.velocity_y += GRAVITY
         self.rect.y += self.velocity_y
+        
+        # Обновляем спрайт в зависимости от состояния
+        if self.jumping:
+            self.current_sprite = self.sprites.get('jump', None)
+        else:
+            self.current_sprite = self.sprites.get('idle', None)
         
         # Проверка столкновения с полом
         if self.rect.bottom >= floor_y:
@@ -85,9 +116,16 @@ class Player:
         if not self.jumping:
             self.velocity_y = JUMP_FORCE
             self.jumping = True
+            self.current_sprite = self.sprites.get('jump', None)
             
     def draw(self, surface):
-        pygame.draw.rect(surface, self.color, self.rect)
+        if self.current_sprite:
+            # Отражаем спрайт, если направление изменилось
+            flipped_sprite = pygame.transform.flip(self.current_sprite, self.direction < 0, False)
+            surface.blit(flipped_sprite, self.rect)
+        else:
+            # Рисуем квадрат, если спрайты не загружены
+            pygame.draw.rect(surface, self.color, self.rect)
 
 def game_loop():
     clock = pygame.time.Clock()
@@ -123,7 +161,7 @@ def game_loop():
         player.apply_gravity(floor_y)
         
         # Отрисовка
-        screen.fill(BLACK)
+        screen.fill(COLOR_OF_SKY)
         
         # Рисуем пол
         pygame.draw.rect(screen, GREEN, (0, floor_y, WIDTH, FLOOR_HEIGHT))
