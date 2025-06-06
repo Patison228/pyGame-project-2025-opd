@@ -24,7 +24,7 @@ def load_image(path):
         image = pygame.image.load(path).convert_alpha()
         return image
     except:
-        print(f"Не удалось загрузить изображение: {path}")
+        print(f"Download image error: {path}")
         return None
 
 def load_background(path):
@@ -78,7 +78,6 @@ class Button:
 
 class Bullet:
     def __init__(self, x, y, dx, dy, owner):
-        # Размеры пули (можно настроить под ваши спрайты)
         self.width = 15
         self.height = 10 
         
@@ -88,7 +87,7 @@ class Bullet:
         self.owner = owner
         self.damage = 10
         self.sprite = None
-        self.is_diagonal = abs(dy) > 0  # Определяем тип выстрела
+        self.is_diagonal = abs(dy) > 0  
         self.load_sprite()
         
     def load_sprite(self):
@@ -106,7 +105,7 @@ class Bullet:
             if self.sprite:
                 self.sprite = pygame.transform.scale(self.sprite, (self.rect.width, self.rect.height))
         except Exception as e:
-            print(f"Ошибка загрузки спрайта пули: {e}")
+            print(f"Download bullet sprite error: {e}")
             self.sprite = None
 
     def update(self):
@@ -131,7 +130,7 @@ class Bullet:
                 flipped_sprite = pygame.transform.flip(self.sprite, self.dx < 0, False)
                 surface.blit(flipped_sprite, self.rect)
         else:
-            # Фолбэк: рисуем цветные прямоугольники если спрайты не загрузились
+
             color = YELLOW if owner == "player_1" else RED
             pygame.draw.rect(surface, color, self.rect)
             
@@ -174,7 +173,7 @@ class Player:
                 self.sprites['jump'] = pygame.transform.scale(jump_img, (self.rect.width, self.rect.height))
                 self.current_sprite = self.sprites['idle']
         except:
-            print(f"Не удалось загрузить спрайты для {self.character_type}")
+            print(f"Сouldn't upload image for this character {self.character_type}")
             self.current_sprite = None
     
     def move(self, dx, dy=0):
