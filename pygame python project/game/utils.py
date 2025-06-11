@@ -6,7 +6,7 @@ def load_image(path):
         image = pygame.image.load(path).convert_alpha()
         return image
     except:
-        print(f"Download image error: {path}")
+        print(f"Error loading image: {path}")
         return None
 
 def load_background(path):

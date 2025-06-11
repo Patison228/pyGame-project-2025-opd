@@ -10,6 +10,8 @@ PLAYER_SPEED = 5
 FLOOR_HEIGHT = 50
 BULLET_SPEED = 10
 MAX_HEALTH = 100
+BONUS_INTERVAL = 60000  # 1 минута в миллисекундах
+DAMAGE_BOOST_DURATION = 10000  # 10 секунд
 
 COLOR_OF_SKY = (135, 206, 235)
 BLACK = (0, 0, 0)
@@ -20,8 +22,18 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 ORANGE = (255, 165, 0)
 YELLOW = (255, 255, 0)
-PLATFORM_COLOR = (100, 70, 40)  # Коричневый цвет для платформ
+PLATFORM_COLOR = (100, 70, 40)
 
-title_font = pygame.font.Font("pygame python project/font/zettameter.ttf", 64)
+title_font = pygame.font.Font("C:/Users/Denis/Desktop/pygame python project/font/zettameter.ttf", 64)
 button_font = pygame.font.SysFont('arial', 32)
 health_font = pygame.font.SysFont('arial', 16)
+SHOOT_COOLDOWN = 30
+
+PLAYER_SPRITES = {
+    "player_1": "C:/Users/Denis/Desktop/pygame python project/image/player_yellow.png",
+    "player_2": "C:/Users/Denis/Desktop/pygame python project/image/player_red.png"
+}
+PLAYER_ACCELERATION = 0.5  # Ускорение при движении
+PLAYER_FRICTION = 0.8      # Трение при остановке
+MIN_SPAWN_DISTANCE = 300
+PLATFORM_MARGIN = 5
