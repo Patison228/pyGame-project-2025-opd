@@ -14,8 +14,8 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Slime crushers")
 
-menu_background = load_background("C:/Users/Denis/Desktop/pygame python project/image/main_menu_bg.png")
-sky_background = load_background("C:/Users/Denis/Desktop/pygame python project/image/bg_sky.jpg")
+menu_background = load_background("pygame python project/image/main_menu_bg.png")
+sky_background = load_background("pygame python project/image/bg_sky.jpg")
 
 
 def game_loop():
@@ -23,11 +23,11 @@ def game_loop():
 
     # Создаем платформы
     platforms = [
-        Platform(100, HEIGHT - FLOOR_HEIGHT - 150, 200, 20),
-        Platform(500, HEIGHT - FLOOR_HEIGHT - 150, 200, 20),
-        Platform(300, HEIGHT - FLOOR_HEIGHT - 300, 200, 20),
-        Platform(100, HEIGHT - FLOOR_HEIGHT - 450, 200, 20),
-        Platform(500, HEIGHT - FLOOR_HEIGHT - 450, 200, 20)
+        Platform(100, 180, 200, 20),
+        Platform(500, 180, 200, 20),
+        Platform(300, 300, 200, 20),
+        Platform(100, 420, 200, 20),
+        Platform(500, 420, 200, 20)
     ]
 
     # Выбираем случайные платформы для спавна игроков
@@ -102,8 +102,10 @@ def game_loop():
         for bonus in bonuses[:]:
             if bonus.check_collision(player1) or bonus.check_collision(player2):
                 bonuses.remove(bonus)
+
         while abs(spawn_platforms[0].x - spawn_platforms[1].x) < MIN_SPAWN_DISTANCE:
             spawn_platforms = random.sample(platforms, 2)
+
         if player1.health <= 0 or player2.health <= 0:
             print("Game over!")
             return
@@ -123,16 +125,13 @@ def game_loop():
         pygame.display.update()
         clock.tick(FPS)
 
-
 def start_game():
     print("Play!")
     game_loop()
 
-
 def quit_game():
     pygame.quit()
     sys.exit()
-
 
 def main_menu():
     clock = pygame.time.Clock()
@@ -167,7 +166,6 @@ def main_menu():
 
     pygame.quit()
     sys.exit()
-
 
 if __name__ == "__main__":
     main_menu()

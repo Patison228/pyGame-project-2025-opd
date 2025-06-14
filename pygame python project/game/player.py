@@ -23,9 +23,11 @@ class Player:
         self.sprite = None
         self.load_sprites()
         self.on_ground = False
+
     def load_sprites(self):
         try:
             self.sprite = load_image(PLAYER_SPRITES[self.player_id])
+
             if self.sprite:
                 # Масштабируем спрайт под размер персонажа
                 self.sprite = pygame.transform.scale(self.sprite, (self.width, self.height))
@@ -121,6 +123,29 @@ class Player:
             self.damage_boost = False
             print(f"Player {self.player_id}'s damage boost ended!")
 
+    def draw_health_bar(self, surface):
+            # Размеры и положение health bar
+            bar_width = self.rect.width
+            bar_height = 8
+            bar_x = self.rect.x
+            bar_y = self.rect.y - 15
+            
+            # Фон health bar (черный)
+            pygame.draw.rect(surface, BLACK, (bar_x, bar_y, bar_width, bar_height))
+            
+            # Текущее здоровье (зеленый/красный)
+            health_ratio = self.health / MAX_HEALTH
+            health_width = int(bar_width * health_ratio)
+            
+            health_color = GREEN if health_ratio > 0.5 else YELLOW if health_ratio > 0.2 else RED
+            
+            pygame.draw.rect(surface, health_color, (bar_x, bar_y, health_width, bar_height))
+            
+            # Текст с количеством HP
+            health_text = health_font.render(f"{self.health}/{MAX_HEALTH}", True, WHITE)
+            text_rect = health_text.get_rect(center=(self.rect.centerx, bar_y - 8))
+            surface.blit(health_text, text_rect)
+
     def draw(self, screen):
         # Рисуем спрайт или прямоугольник, если спрайт не загружен
         if self.sprite:
@@ -131,9 +156,7 @@ class Player:
             color = YELLOW if self.player_id == "player_1" else RED
             pygame.draw.rect(screen, color, self.rect)
 
-        # Отрисовка здоровья
-        health_text = health_font.render(f"HP: {self.health}", True, WHITE)
-        screen.blit(health_text, (self.x, self.y - 20))
+        self.draw_health_bar(screen)
 
         # Отрисовка пуль
         for bullet in self.bullets:

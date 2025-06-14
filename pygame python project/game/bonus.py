@@ -19,10 +19,6 @@ class Bonus:
             self.image = pygame.Surface((self.width, self.height))
             self.image.fill(RED)
 
-    def draw(self, screen):
-        if not self.collected:
-            screen.blit(self.image, (self.x, self.y))
-
     def check_collision(self, player):
         if self.collected:
             return False
@@ -41,3 +37,13 @@ class Bonus:
                 print(f"Player {player.player_id} got damage boost!")
             return True
         return False
+
+    def draw(self, screen):
+        if not self.collected:
+            screen.blit(self.image, (self.x, self.y))
+
+
+    
+
+    
+    
