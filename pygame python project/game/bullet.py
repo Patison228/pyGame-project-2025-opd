@@ -18,7 +18,7 @@ class Bullet:
 
     def load_sprite(self):
         try:
-            base_path = "pygame python project/image/"
+            base_path = "C:/Users/Denis/Desktop/pygame python project/image/"
             sprite_name = "bullet_yellow.png" if self.owner == "player_1" else "bullet_red.png"
             self.sprite = load_image(base_path + sprite_name)
             if self.sprite:

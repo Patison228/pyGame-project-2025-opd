@@ -14,12 +14,15 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Slime crushers")
 
-menu_background = load_background("pygame python project/image/main_menu_bg.png")
-sky_background = load_background("pygame python project/image/bg_sky.jpg")
+menu_background = load_background("C:/Users/Denis/Desktop/pygame python project/image/main_menu_bg.png")
+sky_background = load_background("C:/Users/Denis/Desktop/pygame python project/image/bg_sky.jpg")
 
 
 def game_loop():
     clock = pygame.time.Clock()
+
+    global player1_wins, player2_wins, match_winner, waiting_for_next_match, match_start_time
+
 
     # Создаем платформы
     platforms = [
@@ -52,6 +55,48 @@ def game_loop():
 
     while running:
         current_time = pygame.time.get_ticks()
+
+        if waiting_for_next_match:
+            if current_time - match_start_time >= 5000:
+                if player1_wins >= 3 or player2_wins >= 3:
+                    player1_wins = 0
+                    player2_wins = 0
+                    match_winner = None
+                    waiting_for_next_match = False
+                    return  # Возврат в меню
+                else:
+                    match_winner = None
+                    waiting_for_next_match = False
+                    return game_loop()  # Новая игра
+
+            # Отрисовка результатов матча
+            screen.blit(sky_background, (0, 0))
+
+
+            # Победитель матча
+            winner_text = f"Player {match_winner[-1]} wins!"
+            winner_surface = button_font.render(winner_text, True, WHITE)
+
+            if player1_wins >= 3 or player2_wins >= 3:
+                final_text = f"Player {match_winner[-1]} wins the tournament!"
+                final_surface = button_font.render(final_text, True, WHITE)
+                screen.blit(final_surface, (WIDTH // 2 - final_surface.get_width() // 2, HEIGHT // 2 - 50))
+                screen.blit(winner_surface, (WIDTH // 2 - winner_surface.get_width() // 2, HEIGHT // 2))
+
+                timer_text = f"Returning to main menu in {5 - (current_time - match_start_time) // 1000} seconds"
+                timer_surface = button_font.render(timer_text, True, WHITE)
+                screen.blit(timer_surface, (WIDTH // 2 - timer_surface.get_width() // 2, HEIGHT // 2 + 25))
+
+            else:
+                screen.blit(winner_surface, (WIDTH // 2 - winner_surface.get_width() // 2, HEIGHT // 2 - 25))
+                # Таймер
+                timer_text = f"Next match in {5 - (current_time - match_start_time) // 1000} seconds"
+                timer_surface = button_font.render(timer_text, True, WHITE)
+                screen.blit(timer_surface, (WIDTH // 2 - timer_surface.get_width() // 2, HEIGHT // 2 + 25))
+
+            pygame.display.update()
+            clock.tick(FPS)
+            continue
 
         if current_time - last_bonus_time > BONUS_INTERVAL:
             platform = random.choice(platforms)
@@ -107,8 +152,15 @@ def game_loop():
             spawn_platforms = random.sample(platforms, 2)
 
         if player1.health <= 0 or player2.health <= 0:
-            print("Game over!")
-            return
+            if player1.health <= 0:
+                player2_wins += 1
+                match_winner = "player_2"
+            else:
+                player1_wins += 1
+                match_winner = "player_1"
+
+            waiting_for_next_match = True
+            match_start_time = pygame.time.get_ticks()
 
         screen.blit(sky_background, (0, 0))
         pygame.draw.rect(screen, GREEN, (0, HEIGHT - FLOOR_HEIGHT, WIDTH, FLOOR_HEIGHT))
@@ -121,6 +173,11 @@ def game_loop():
 
         player1.draw(screen)
         player2.draw(screen)
+
+        # Отрисовка счета
+        score_text = f"{player1_wins} - {player2_wins}"
+        score_surface = button_font.render(score_text, True, WHITE)
+        screen.blit(score_surface, (WIDTH // 2 - score_surface.get_width() // 2, 20))
 
         pygame.display.update()
         clock.tick(FPS)
@@ -160,6 +217,7 @@ def main_menu():
 
         for button in buttons:
             button.draw(screen)
+
 
         pygame.display.update()
         clock.tick(FPS)
