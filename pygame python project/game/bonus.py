@@ -1,6 +1,8 @@
 import pygame
 import random
 from settings import *
+from utils import load_image
+
 
 class Bonus:
     def __init__(self, x, y):
@@ -12,12 +14,17 @@ class Bonus:
         self.collected = False
         self.spawn_time = pygame.time.get_ticks()
 
-        if self.type == "health":
+        # Загрузка спрайтов
+        try:
+            if self.type == "health":
+                self.image = load_image("C:/Users/Denis/Desktop/pygame python project/image/health_bonus.png")
+            else:
+                self.image = load_image("C:/Users/Denis/Desktop/pygame python project/image/damage_bonus.png")
+        except:
+            # Если спрайты не загрузились, создаем цветные квадраты
             self.image = pygame.Surface((self.width, self.height))
-            self.image.fill(GREEN)
-        else:
-            self.image = pygame.Surface((self.width, self.height))
-            self.image.fill(RED)
+            self.image.fill(GREEN if self.type == "health" else RED)
+
 
     def check_collision(self, player):
         if self.collected:
@@ -41,9 +48,3 @@ class Bonus:
     def draw(self, screen):
         if not self.collected:
             screen.blit(self.image, (self.x, self.y))
-
-
-    
-
-    
-    

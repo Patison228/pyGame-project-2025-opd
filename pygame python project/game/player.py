@@ -64,13 +64,14 @@ class Player:
             self.jumping = True
             self.on_ground = False
 
-    def apply_gravity(self, platforms):
-        # Применяем гравитацию
+    # В классе Player изменим метод apply_gravity:
+    def apply_gravity(self, platforms, map_type):
+        # Всегда применяем гравитацию
         self.velocity_y += GRAVITY
         self.y += self.velocity_y
         self.rect.y = self.y
 
-        # Сбрасываем флаг нахождения на земле
+        # Сбрасываем флаг нахождения на земле перед проверкой коллизий
         self.on_ground = False
 
         # Проверяем коллизии с платформами
@@ -89,13 +90,10 @@ class Player:
                     self.y = self.rect.y
                     self.velocity_y = 0
 
-        # Проверка столкновения с полом
-        if self.rect.bottom > HEIGHT - FLOOR_HEIGHT:
-            self.rect.bottom = HEIGHT - FLOOR_HEIGHT
-            self.y = self.rect.y
-            self.velocity_y = 0
-            self.jumping = False
-            self.on_ground = True
+        # Для карт без пола - дополнительная проверка падения
+        if map_type in ["no_floor", "pits"] and not self.on_ground:
+            # Увеличиваем скорость падения, если не на платформе
+            self.velocity_y = min(self.velocity_y + 0.2, 15)  # Максимальная скорость падения
 
     def shoot(self, dx, dy):
         if self.shoot_cooldown <= 0:

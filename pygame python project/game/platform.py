@@ -16,7 +16,7 @@ class Platform:
 
     def load_sprite(self):
         try:
-            self.sprite = load_image("C:/Users/Denis/Desktop/pygame python project/images/platform.png")
+            self.sprite = load_image("C:/Users/Denis/Desktop/pygame python project/image/images (6).jfif")
             if self.sprite:
                 self.sprite = pygame.transform.scale(self.sprite, (self.rect.width, self.rect.height))
         except Exception as e:

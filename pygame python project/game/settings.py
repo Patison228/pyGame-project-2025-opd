@@ -45,3 +45,10 @@ player2_wins = 0
 match_winner = None
 waiting_for_next_match = False
 match_start_time = 0
+
+last_bonus_time = 0
+running = True
+game_paused = False
+winner = None
+final_winner = None
+round_end_time = 0
