@@ -104,7 +104,7 @@ def game_loop(map_type):
             if elapsed < 3000:  # 5 секунд отсчета
                 countdown_value = 3 - elapsed // 1000
                 screen.blit(sky_background, (0, 0))
-                countdown_text = title_font.render(str(countdown_value), True, WHITE)
+                countdown_text = number_font.render(str(countdown_value), True, WHITE)
                 screen.blit(countdown_text, (WIDTH // 2 - countdown_text.get_width() // 2, HEIGHT // 2 - countdown_text.get_height() // 2))
                 pygame.display.flip()
                 continue
@@ -206,15 +206,15 @@ def game_loop(map_type):
 
         # Отрисовка счета
         score_text = f"{player1_wins} - {player2_wins}"
-        score_surface = button_font.render(score_text, True, WHITE)
+        score_surface = number_font.render(score_text, True, YELLOW)
         screen.blit(score_surface, (WIDTH // 2 - score_surface.get_width() // 2, 20))
 
         # Если игра на паузе между раундами
         if game_paused and not show_countdown:
             if final_winner:
                 # Финальная победа
-                winner_text = button_font.render(f"{final_winner} won the game!", True, WHITE)
-                subtitle = button_font.render("Returning to main menu...", True, WHITE)
+                winner_text = number_font.render(f"{final_winner} won the game!", True, RED)
+                subtitle = number_font.render("Returning to main menu...", True, RED)
 
                 screen.blit(winner_text, (WIDTH // 2 - winner_text.get_width() // 2, HEIGHT // 2 - 50))
                 screen.blit(subtitle, (WIDTH // 2 - subtitle.get_width() // 2, HEIGHT // 2 + 20))
@@ -228,8 +228,8 @@ def game_loop(map_type):
                 elapsed = current_time - round_end_time
                 if elapsed < 3000:  # 5 секунд паузы
                     countdown = 3 - elapsed // 1000
-                    winner_text = title_font.render(f"{winner} won the round!", True, WHITE)
-                    countdown_text = button_font.render(f"Next round in {countdown}", True, WHITE)
+                    winner_text = number_font.render(f"{winner} won the round!", True, WHITE)
+                    countdown_text = number_font.render(f"Next round in {countdown}", True, WHITE)
 
                     screen.blit(winner_text, (WIDTH // 2 - winner_text.get_width() // 2, HEIGHT // 2 - 50))
                     screen.blit(countdown_text, (WIDTH // 2 - countdown_text.get_width() // 2, HEIGHT // 2 + 20))
@@ -287,7 +287,7 @@ def select_map():
         # Отрисовка
         screen.blit(menu_background, (0, 0))
         title_text = title_font.render("Select Map", True, WHITE)
-        screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, 120))
+        screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, 90))
 
         for button in buttons:
             button.is_hovered = button.rect.collidepoint(mouse_pos)

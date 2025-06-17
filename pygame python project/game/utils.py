@@ -1,5 +1,5 @@
 import pygame
-from settings import WIDTH, HEIGHT
+from settings import *
 
 def load_image(path):
     try:
@@ -12,3 +12,4 @@ def load_image(path):
 def load_background(path):
     image = pygame.image.load(path).convert()
     return pygame.transform.scale(image, (WIDTH, HEIGHT))
+

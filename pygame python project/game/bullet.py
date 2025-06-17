@@ -2,12 +2,18 @@ import pygame
 from settings import *
 from utils import load_image
 
-
 class Bullet:
     def __init__(self, x, y, dx, dy, owner):
         self.width = 15
         self.height = 10
         self.rect = pygame.Rect(x, y, self.width, self.height)
+
+        # Нормируем вектор направления
+        length = (dx ** 2 + dy ** 2) ** 0.5
+        if length > 0:  
+            dx = dx / length
+            dy = dy / length
+        
         self.dx = dx * BULLET_SPEED
         self.dy = dy * BULLET_SPEED
         self.owner = owner

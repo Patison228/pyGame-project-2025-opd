@@ -19,7 +19,7 @@ class Bonus:
             self.image = load_image("pygame python project/image/health_bonus.png")
         elif self.type == "damage":
             self.image = load_image("pygame python project/image/damage_bonus.png")
-        elif self.image == "protection":
+        else:
             self.image = load_image("pygame python project/image/protection_bonus.png")
         
     def check_collision(self, player):

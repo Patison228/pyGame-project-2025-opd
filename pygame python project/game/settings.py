@@ -8,9 +8,9 @@ GRAVITY = 0.5
 JUMP_FORCE = -12
 PLAYER_SPEED = 5
 FLOOR_HEIGHT = 50
-BULLET_SPEED = 10
+BULLET_SPEED = 13
 MAX_HEALTH = 100
-BONUS_INTERVAL = 2000
+BONUS_INTERVAL = 15000
 DAMAGE_BOOST_DURATION = 10000  # 10 секунд
 
 COLOR_OF_SKY = (135, 206, 235)
@@ -28,6 +28,7 @@ title_font = pygame.font.Font("pygame python project/font/zettameter.ttf", 64)
 button_font = pygame.font.SysFont('arial', 32)
 health_font = pygame.font.SysFont('arial', 16)
 bonus_font = pygame.font.SysFont('arial', 24)
+number_font = pygame.font.Font("pygame python project/font/RubikSprayPaint-Regular.ttf", 40)
 SHOOT_COOLDOWN = 30
 
 PLAYER_SPRITES = {

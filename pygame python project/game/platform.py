@@ -1,6 +1,7 @@
 import pygame
-from utils import load_image
+from utils import *
 from settings import PLATFORM_COLOR
+from player import Player
 
 class Platform:
     def __init__(self, x, y, width, height, color=PLATFORM_COLOR):
