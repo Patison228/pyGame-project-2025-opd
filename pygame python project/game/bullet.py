@@ -17,7 +17,6 @@ class Bullet:
         self.dx = dx * BULLET_SPEED
         self.dy = dy * BULLET_SPEED
         self.owner = owner
-        self.damage = 10
         self.sprite = None
         self.is_diagonal = abs(dy) > 0
         self.load_sprite()

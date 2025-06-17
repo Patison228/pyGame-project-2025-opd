@@ -23,6 +23,7 @@ class Player:
         self.protection_count = 0
         self.sprite = None
         self.shield_sprite = None
+        self.icon_damage_boost_sprite = None
         self.load_sprites()
         self.on_ground = False
 
@@ -30,6 +31,7 @@ class Player:
         try:
             self.sprite = load_image(PLAYER_SPRITES[self.player_id])
             self.shield_sprite = load_image("pygame python project/image/shield.png")
+            self.icon_damage_boost_sprite = load_image("pygame python project/image/icon_damage_boost.png")
 
             if self.shield_sprite:
                 self.shield_sprite = pygame.transform.scale(self.shield_sprite, (self.rect.width + 8, self.rect.height + 8))
@@ -37,6 +39,7 @@ class Player:
             if self.sprite:
                 # Масштабируем спрайт под размер персонажа
                 self.sprite = pygame.transform.scale(self.sprite, (self.width, self.height))
+
                 # Создаем зеркальное отражение для движения влево
                 self.flipped_sprite = pygame.transform.flip(self.sprite, True, False)
         except Exception as e:
@@ -49,14 +52,17 @@ class Player:
 
         old_x = self.x
         self.x += dx * PLAYER_SPEED
+        
+        # Ограничение по горизонтали (чтобы не выходил за границы экрана)
+        self.x = max(0, min(self.x, WIDTH - self.rect.width))  # Не левее 0 и не правее WIDTH
         self.rect.x = self.x
 
-        # Проверка боковых коллизий с платформами
-        if not self.on_ground:  # Проверяем только если в воздухе
+        # Проверка боковых коллизий с платформами (только в воздухе)
+        if not self.on_ground:
             for platform in platforms:
                 if self.rect.colliderect(platform.rect):
                     # Движение вправо
-                    if dx > 0 and old_x + self.width <= platform.rect.left:
+                    if dx > 0 and old_x + self.rect.width <= platform.rect.left:
                         self.rect.right = platform.rect.left
                         self.x = self.rect.x
                     # Движение влево
@@ -133,6 +139,14 @@ class Player:
         else:
             pygame.draw.rect(surface, BLUE, self.rect)
 
+    def draw_boost_damage_icon(self, surface):
+        icon_width = 8
+        icon_height = 8
+        icon_x = self.rect.x + self.rect.width + 5
+        icon_y = self.rect.y - 15
+
+        surface.blit(self.icon_damage_boost_sprite, (icon_x, icon_y))
+
     def draw_health_bar(self, surface):
             # Размеры и положение health bar
             bar_width = self.rect.width
@@ -143,7 +157,7 @@ class Player:
             # Фон health bar (черный)
             pygame.draw.rect(surface, BLACK, (bar_x, bar_y, bar_width, bar_height))
             
-            # Текущее здоровье (зеленый/красный)
+            # Текущее здоровье (зеленый/желтый/красный)
             health_ratio = self.health / MAX_HEALTH
             health_width = int(bar_width * health_ratio)
             
@@ -172,6 +186,10 @@ class Player:
 
         #отрисовка хпбара
         self.draw_health_bar(screen)
+        
+        #отрисовка иконки увеличения урона
+        if (self.damage_boost):
+            self.draw_boost_damage_icon(screen)
 
         # Отрисовка пуль
         for bullet in self.bullets:

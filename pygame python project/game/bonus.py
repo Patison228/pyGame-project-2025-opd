@@ -21,7 +21,7 @@ class Bonus:
             self.image = load_image("pygame python project/image/damage_bonus.png")
         else:
             self.image = load_image("pygame python project/image/protection_bonus.png")
-        
+
     def check_collision(self, player):
         if self.collected:
             return False
@@ -47,7 +47,7 @@ class Bonus:
     def draw(self, screen):
         if not self.collected and self.image is not None:
             screen.blit(self.image, (self.x, self.y))
-        elif not self.collected:  # Если image всё равно None
+        elif not self.collected:  
             # Рисуем простой прямоугольник
             if self.type == "health":
                 color = GREEN
