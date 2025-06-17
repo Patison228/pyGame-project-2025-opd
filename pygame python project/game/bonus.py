@@ -3,28 +3,23 @@ import random
 from settings import *
 from utils import load_image
 
-
 class Bonus:
     def __init__(self, x, y):
         self.x = x
         self.y = y
         self.width = 30
         self.height = 30
+        self.image = None
         self.type = random.choice(["health", "damage"])
         self.collected = False
         self.spawn_time = pygame.time.get_ticks()
 
         # Загрузка спрайтов
-        try:
-            if self.type == "health":
-                self.image = load_image("C:/Users/Denis/Desktop/pygame python project/image/health_bonus.png")
-            else:
-                self.image = load_image("C:/Users/Denis/Desktop/pygame python project/image/damage_bonus.png")
-        except:
-            # Если спрайты не загрузились, создаем цветные квадраты
-            self.image = pygame.Surface((self.width, self.height))
-            self.image.fill(GREEN if self.type == "health" else RED)
-
+        if self.type == "health":
+            self.image = load_image("pygame python project/image/health_bonus.png")
+        else:
+            self.image = load_image("pygame python project/image/damage_bonus.png")
+        
 
     def check_collision(self, player):
         if self.collected:
@@ -46,5 +41,9 @@ class Bonus:
         return False
 
     def draw(self, screen):
-        if not self.collected:
+        if not self.collected and self.image is not None:
             screen.blit(self.image, (self.x, self.y))
+        elif not self.collected:  # Если image всё равно None
+            # Рисуем простой прямоугольник
+            color = (0, 255, 0) if self.type == "health" else (255, 0, 0)
+            pygame.draw.rect(screen, color, (self.x, self.y, self.width, self.height))

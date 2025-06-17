@@ -18,7 +18,7 @@ class Bullet:
 
     def load_sprite(self):
         try:
-            base_path = "C:/Users/Denis/Desktop/pygame python project/image/"
+            base_path = "pygame python project/image/"
             sprite_name = "bullet_yellow.png" if self.owner == "player_1" else "bullet_red.png"
             self.sprite = load_image(base_path + sprite_name)
             if self.sprite:
@@ -37,7 +37,7 @@ class Bullet:
             if self.is_diagonal:
                 angle = 45 * direction * (-1 if self.dy > 0 else 1)
                 rotated_sprite = pygame.transform.rotate(self.sprite, angle)
-                rotated_rect = rotated_sprite.get_rect(center=self.rect.center)
+                rotated_rect = rotated_sprite.get_rect(center = self.rect.center)
                 surface.blit(rotated_sprite, rotated_rect)
             else:
                 flipped_sprite = pygame.transform.flip(self.sprite, self.dx < 0, False)

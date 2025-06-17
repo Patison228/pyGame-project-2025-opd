@@ -15,16 +15,15 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Slime crushers")
 
 # Загрузка изображений
-menu_background = load_background("C:/Users/Denis/Desktop/pygame python project/image/main_menu_bg.png")
-sky_background = load_background("C:/Users/Denis/Desktop/pygame python project/image/bg_sky.jpg")
+menu_background = load_background("pygame python project/image/main_menu_bg.png")
+sky_background = load_background("pygame python project/image/bg_sky.jpg")
 
 def countdown_timer(screen):
     clock = pygame.time.Clock()
     for i in range(5, 0, -1):
         screen.blit(sky_background, (0, 0))
         countdown_text = title_font.render(str(i), True, WHITE)
-        screen.blit(countdown_text, (WIDTH // 2 - countdown_text.get_width() // 2,
-                                   HEIGHT // 2 - countdown_text.get_height() // 2))
+        screen.blit(countdown_text, (WIDTH // 2 - countdown_text.get_width() // 2, HEIGHT // 2 - countdown_text.get_height() // 2))
         pygame.display.flip()
         pygame.time.wait(1000)  # Ждем 1 секунду
         clock.tick(FPS)
@@ -65,7 +64,6 @@ def generate_platforms(map_type):
 
     return platforms
 
-
 def game_loop(map_type):
     clock = pygame.time.Clock()
     global player1_wins, player2_wins, winner
@@ -77,7 +75,6 @@ def game_loop(map_type):
     round_end_time = 0
 
     platforms = generate_platforms(map_type)
-
 
     spawn_platforms = random.sample([p for p in platforms if p.height < 50], 2)
 
@@ -96,9 +93,11 @@ def game_loop(map_type):
     running = True
     show_countdown = True  # Флаг для показа обратного отсчета
     countdown_start = pygame.time.get_ticks()
+    last_bonus_time = pygame.time.get_ticks()
 
     while running:
         current_time = pygame.time.get_ticks()
+        
 
         # Показываем обратный отсчет в начале раунда
         if show_countdown and map_type:
@@ -107,8 +106,7 @@ def game_loop(map_type):
                 countdown_value = 3 - elapsed // 1000
                 screen.blit(sky_background, (0, 0))
                 countdown_text = title_font.render(str(countdown_value), True, WHITE)
-                screen.blit(countdown_text, (WIDTH // 2 - countdown_text.get_width() // 2,
-                                             HEIGHT // 2 - countdown_text.get_height() // 2))
+                screen.blit(countdown_text, (WIDTH // 2 - countdown_text.get_width() // 2, HEIGHT // 2 - countdown_text.get_height() // 2))
                 pygame.display.flip()
                 continue
             else:
@@ -137,6 +135,8 @@ def game_loop(map_type):
             if keys[pygame.K_UP]: player2.jump()
             if keys[pygame.K_f]: player1.shoot(player1.direction, 0)
             if keys[pygame.K_l]: player2.shoot(player2.direction, 0)
+            if keys[pygame.K_g]: player1.shoot(player1.direction, 1)
+            if keys[pygame.K_k]: player2.shoot(player2.direction, 1)
 
             # Обновление игрового состояния
             player1.apply_gravity(platforms, map_type)
@@ -178,6 +178,20 @@ def game_loop(map_type):
         for platform in platforms:
             platform.draw(screen)
 
+        if current_time - last_bonus_time > BONUS_INTERVAL:
+            platform = random.choice(platforms)
+            x = random.randint(platform.x, platform.x + platform.width - 30)
+            y = platform.y - 30
+            bonuses.append(Bonus(x, y))
+            last_bonus_time = current_time
+
+        for bonus in bonuses[:]:
+            if bonus.check_collision(player1) or bonus.check_collision(player2):
+                bonuses.remove(bonus)
+
+        while abs(spawn_platforms[0].x - spawn_platforms[1].x) < MIN_SPAWN_DISTANCE:
+            spawn_platforms = random.sample(platforms, 2)
+
         # Рисуем игроков, если игра не закончена
         if not final_winner and not show_countdown:
             player1.draw(screen)
@@ -196,7 +210,7 @@ def game_loop(map_type):
         if game_paused and not show_countdown:
             if final_winner:
                 # Финальная победа
-                winner_text = title_font.render(f"{final_winner} won the game!", True, WHITE)
+                winner_text = button_font.render(f"{final_winner} won the game!", True, WHITE)
                 subtitle = button_font.render("Returning to main menu...", True, WHITE)
 
                 screen.blit(winner_text, (WIDTH // 2 - winner_text.get_width() // 2, HEIGHT // 2 - 50))
@@ -240,7 +254,6 @@ def game_loop(map_type):
 
     return "menu"
 
-
 def select_map():
     clock = pygame.time.Clock()
     buttons = [
@@ -279,7 +292,6 @@ def select_map():
         pygame.display.update()
         clock.tick(FPS)
 
-
 def start_game():
     map_choice = select_map()
     if map_choice == "menu":
@@ -299,6 +311,7 @@ def main_menu():
     ]
 
     running = True
+
     while running:
         mouse_pos = pygame.mouse.get_pos()
         for event in pygame.event.get():
@@ -318,7 +331,6 @@ def main_menu():
 
         for button in buttons:
             button.draw(screen)
-
 
         pygame.display.update()
         clock.tick(FPS)

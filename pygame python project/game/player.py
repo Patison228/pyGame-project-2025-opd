@@ -84,16 +84,6 @@ class Player:
                     self.velocity_y = 0
                     self.jumping = False
                     self.on_ground = True
-                # Если движемся вверх и ударяемся головой
-                elif self.velocity_y < 0 and self.rect.top >= platform.rect.bottom + self.velocity_y - 5:
-                    self.rect.top = platform.rect.bottom
-                    self.y = self.rect.y
-                    self.velocity_y = 0
-
-        # Для карт без пола - дополнительная проверка падения
-        if map_type in ["no_floor", "pits"] and not self.on_ground:
-            # Увеличиваем скорость падения, если не на платформе
-            self.velocity_y = min(self.velocity_y + 0.2, 15)  # Максимальная скорость падения
 
     def shoot(self, dx, dy):
         if self.shoot_cooldown <= 0:
