@@ -2,7 +2,6 @@ import pygame
 from utils import load_image
 from settings import PLATFORM_COLOR
 
-
 class Platform:
     def __init__(self, x, y, width, height, color=PLATFORM_COLOR):
         self.rect = pygame.Rect(x, y, width, height)
@@ -16,7 +15,7 @@ class Platform:
 
     def load_sprite(self):
         try:
-            self.sprite = load_image("pygame python project/image/platform.png")
+            self.sprite = load_image("pygame python project/image/platform_1.png")
             if self.sprite:
                 self.sprite = pygame.transform.scale(self.sprite, (self.rect.width, self.rect.height))
         except Exception as e:

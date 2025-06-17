@@ -98,7 +98,6 @@ def game_loop(map_type):
     while running:
         current_time = pygame.time.get_ticks()
         
-
         # Показываем обратный отсчет в начале раунда
         if show_countdown and map_type:
             elapsed = current_time - countdown_start
@@ -141,11 +140,13 @@ def game_loop(map_type):
             # Обновление игрового состояния
             player1.apply_gravity(platforms, map_type)
             player2.apply_gravity(platforms, map_type)
+            player1.update_protection()
+            player2.update_protection()
             player1.update_bullets(player2)
             player2.update_bullets(player1)
             player1.update_cooldown()
             player2.update_cooldown()
-
+            
             # Проверка падения
             if map_type in ["no_floor", "pits"]:
                 if player1.rect.top > HEIGHT + 100:
@@ -178,6 +179,7 @@ def game_loop(map_type):
         for platform in platforms:
             platform.draw(screen)
 
+        #добавление бонуса
         if current_time - last_bonus_time > BONUS_INTERVAL:
             platform = random.choice(platforms)
             x = random.randint(platform.x, platform.x + platform.width - 30)
@@ -185,6 +187,7 @@ def game_loop(map_type):
             bonuses.append(Bonus(x, y))
             last_bonus_time = current_time
 
+        #проверка подбора бонуса
         for bonus in bonuses[:]:
             if bonus.check_collision(player1) or bonus.check_collision(player2):
                 bonuses.remove(bonus)
@@ -234,6 +237,7 @@ def game_loop(map_type):
                     # Перезапуск раунда
                     game_paused = False
                     show_countdown = True
+                    bonuses.clear()
                     countdown_start = pygame.time.get_ticks()
                     platforms = generate_platforms(map_type)
                     spawn_platforms = random.sample([p for p in platforms if p.height < 50], 2)

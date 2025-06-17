@@ -3,7 +3,6 @@ from settings import *
 from bullet import Bullet
 from utils import load_image
 
-
 class Player:
     def __init__(self, x, y, size, player_id):
         self.x = x
@@ -20,13 +19,20 @@ class Player:
         self.shoot_cooldown = 0
         self.damage_boost = False
         self.damage_boost_time = 0
+        self.protection_boost = False
+        self.protection_count = 0
         self.sprite = None
+        self.shield_sprite = None
         self.load_sprites()
         self.on_ground = False
 
     def load_sprites(self):
         try:
             self.sprite = load_image(PLAYER_SPRITES[self.player_id])
+            self.shield_sprite = load_image("pygame python project/image/shield.png")
+
+            if self.shield_sprite:
+                self.shield_sprite = pygame.transform.scale(self.shield_sprite, (self.rect.width + 8, self.rect.height + 8))
 
             if self.sprite:
                 # Масштабируем спрайт под размер персонажа
@@ -64,7 +70,6 @@ class Player:
             self.jumping = True
             self.on_ground = False
 
-    # В классе Player изменим метод apply_gravity:
     def apply_gravity(self, platforms, map_type):
         # Всегда применяем гравитацию
         self.velocity_y += GRAVITY
@@ -97,8 +102,12 @@ class Player:
         for bullet in self.bullets[:]:
             bullet.update()
             if bullet.rect.colliderect(enemy.rect):
-                enemy.health -= bullet.damage
-                self.bullets.remove(bullet)
+                if enemy.protection_boost:
+                    enemy.protection_count = enemy.protection_count - 1
+                    self.bullets.remove(bullet)
+                else:
+                    enemy.health -= bullet.damage
+                    self.bullets.remove(bullet)
             elif bullet.is_out_of_screen():
                 self.bullets.remove(bullet)
 
@@ -110,6 +119,19 @@ class Player:
         if self.damage_boost and current_time - self.damage_boost_time > DAMAGE_BOOST_DURATION:
             self.damage_boost = False
             print(f"Player {self.player_id}'s damage boost ended!")
+
+    def update_protection(self):
+        if self.protection_count > 0:
+            self.protection_boost = True
+        else:
+            self.protection_boost = False
+
+    def draw_shield(self, surface):
+
+        if self.shield_sprite:
+            surface.blit(self.shield_sprite, (self.x - 4, self.y - 4))
+        else:
+            pygame.draw.rect(surface, BLUE, self.rect)
 
     def draw_health_bar(self, surface):
             # Размеры и положение health bar
@@ -135,6 +157,10 @@ class Player:
             surface.blit(health_text, text_rect)
 
     def draw(self, screen):
+        # #отрисовка барьера
+        if self.protection_boost:
+            self.draw_shield(screen)
+
         # Рисуем спрайт или прямоугольник, если спрайт не загружен
         if self.sprite:
             # Выбираем направленный спрайт
@@ -144,6 +170,7 @@ class Player:
             color = YELLOW if self.player_id == "player_1" else RED
             pygame.draw.rect(screen, color, self.rect)
 
+        #отрисовка хпбара
         self.draw_health_bar(screen)
 
         # Отрисовка пуль
