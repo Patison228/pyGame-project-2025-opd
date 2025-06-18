@@ -28,12 +28,3 @@ class Platform:
             surface.blit(self.sprite, self.rect)
         else:
             pygame.draw.rect(surface, self.color, self.rect)
-
-    def check_collision(self, player):
-        if player.rect.colliderect(self.rect):
-            if (player.velocity_y > 0 and player.rect.bottom <= self.rect.top + player.velocity_y + 1):
-                player.rect.bottom = self.rect.top
-                player.velocity_y = 0
-                player.jumping = False
-                return True
-        return False
