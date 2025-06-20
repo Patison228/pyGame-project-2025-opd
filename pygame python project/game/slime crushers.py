@@ -9,6 +9,7 @@ from utils import *
 from button import Button
 from bonus import Bonus
 
+
 pygame.init()
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
