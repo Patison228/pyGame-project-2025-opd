@@ -119,7 +119,8 @@ def game_loop(map_type):
                     musicManager.stop()  # Останавливаем музыку при выходе в меню
                     player2_wins = 0
                     player1_wins = 0
-                    return "menu"
+                    final_winner = None
+                    return main_menu()
                 elif event.key == pygame.K_b:  # Обработка нажатия B
                     if musicManager.current_music in musicManager.menu_music_list:
                         musicManager.next_menu_track()
@@ -217,21 +218,32 @@ def game_loop(map_type):
             if final_winner:
                 # Финальная победа
                 winner_text = number_font.render(f"{final_winner} won the game!", True, RED)
-                subtitle = number_font.render("Returning to main menu...", True, RED)
+                subtitle = number_font.render("Press any key to continue...", True, WHITE)
 
                 screen.blit(winner_text, (WIDTH // 2 - winner_text.get_width() // 2, HEIGHT // 2 - 50))
                 screen.blit(subtitle, (WIDTH // 2 - subtitle.get_width() // 2, HEIGHT // 2 + 20))
-                player2_wins = 0
-                player1_wins = 0
                 pygame.display.flip()
-                pygame.time.wait(3000)
-                musicManager.stop()  # Останавливаем музыку перед возвратом в меню
-                return "menu"
+
+                # Ждем нажатия любой клавиши
+                waiting = True
+                while waiting:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            pygame.quit()
+                            sys.exit()
+                        elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                            waiting = False
+
+                # Сбрасываем состояние игры
+                player1_wins = 0
+                player2_wins = 0
+                final_winner = None
+                musicManager.stop()
+                return main_menu()
             else:
                 # Победа в раунде
                 elapsed = current_time - round_end_time
-
-                if elapsed < 3000:  # 5 секунд паузы
+                if elapsed < 3000:  # 3 секунды паузы
                     countdown = 3 - elapsed // 1000
                     winner_text = number_font.render(f"{winner} won the round!", True, WHITE)
                     countdown_text = number_font.render(f"Next round in {countdown}", True, WHITE)
