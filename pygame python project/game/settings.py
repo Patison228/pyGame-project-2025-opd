@@ -12,6 +12,7 @@ BULLET_SPEED = 13
 MAX_HEALTH = 100
 BONUS_INTERVAL = 15000
 DAMAGE_BOOST_DURATION = 10000  # 10 секунд
+SHOOT_COOLDOWN = 30
 
 COLOR_OF_SKY = (135, 206, 235)
 BLACK = (0, 0, 0)
@@ -24,12 +25,17 @@ ORANGE = (255, 165, 0)
 YELLOW = (255, 255, 0)
 PLATFORM_COLOR = (100, 70, 40)
 
-title_font = pygame.font.Font("pygame python project/font/zettameter.ttf", 64)
+shoot_sound = pygame.mixer.Sound("pygame python project\sounds\shoot_sound.mp3")  
+jump_sound = pygame.mixer.Sound("pygame python project\sounds\jump_sound.wav")
+health_bonus_sound = pygame.mixer.Sound("pygame python project\sounds\health_bonus_collect.mp3")
+damage_bonus_sound = pygame.mixer.Sound("pygame python project\sounds\shield_bonus_collect.mp3")
+shield_bonus_sound = pygame.mixer.Sound("pygame python project\sounds\shield_bonus_collect.mp3")
+
 button_font = pygame.font.SysFont('arial', 32)
 health_font = pygame.font.SysFont('arial', 16)
 bonus_font = pygame.font.SysFont('arial', 24)
+title_font = pygame.font.Font("pygame python project/font/zettameter.ttf", 64)
 number_font = pygame.font.Font("pygame python project/font/RubikSprayPaint-Regular.ttf", 40)
-SHOOT_COOLDOWN = 30
 
 PLAYER_SPRITES = {
     "player_1": "pygame python project/image/slime_sprite_green.png",

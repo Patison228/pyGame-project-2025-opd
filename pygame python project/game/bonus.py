@@ -32,13 +32,16 @@ class Bonus:
         if player_rect.colliderect(bonus_rect):
             self.collected = True
             if self.type == "health":
+                health_bonus_sound.play()
                 player.health = min(player.health + 10, 100)
                 print(f"Player {player.player_id} collected health!")
             elif self.type == "damage":
+                damage_bonus_sound.play()
                 player.damage_boost = True
                 player.damage_boost_time = pygame.time.get_ticks()
                 print(f"Player {player.player_id} got damage boost!")
             elif self.type == "protection":
+                shield_bonus_sound.play()
                 player.protection_count = 3
                 print(f"Player {player.player_id} got protection boost!")
             return True

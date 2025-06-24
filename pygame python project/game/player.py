@@ -72,6 +72,7 @@ class Player:
 
     def jump(self):
         if self.on_ground and not self.jumping:
+            jump_sound.play()
             self.velocity_y = JUMP_FORCE
             self.jumping = True
             self.on_ground = False
@@ -98,6 +99,7 @@ class Player:
 
     def shoot(self, dx, dy):
         if self.shoot_cooldown <= 0:
+            shoot_sound.play()
             damage = 15 if self.damage_boost else 10
             bullet = Bullet(self.x + self.width // 2, self.y + self.height // 2, dx, dy, self.player_id)
             bullet.damage = damage
