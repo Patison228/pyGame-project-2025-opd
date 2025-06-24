@@ -8,25 +8,16 @@ from platform import Platform
 from utils import *
 from button import Button
 from bonus import Bonus
+from music_menager import MusicManager
 
 pygame.init()
-
+musicManager = MusicManager(main_menu_music, game_music)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Slime crushers")
 
 # Загрузка изображений
 menu_background = load_background("pygame python project/image/main_menu_bg.png")
 sky_background = load_background("pygame python project/image/bg_sky.jpg")
-
-def countdown_timer(screen):
-    clock = pygame.time.Clock()
-    for i in range(5, 0, -1):
-        screen.blit(sky_background, (0, 0))
-        countdown_text = title_font.render(str(i), True, WHITE)
-        screen.blit(countdown_text, (WIDTH // 2 - countdown_text.get_width() // 2, HEIGHT // 2 - countdown_text.get_height() // 2))
-        pygame.display.flip()
-        pygame.time.wait(1000)  # Ждем 1 секунду
-        clock.tick(FPS)
 
 def generate_platforms(map_type):
     platforms = []
@@ -66,6 +57,7 @@ def generate_platforms(map_type):
 
 def game_loop(map_type):
     clock = pygame.time.Clock()
+    musicManager.play_game()
     global player1_wins, player2_wins, winner
 
     # Инициализация глобальных переменных
@@ -222,10 +214,12 @@ def game_loop(map_type):
                 player1_wins = 0
                 pygame.display.flip()
                 pygame.time.wait(3000)
+
                 return "menu"
             else:
                 # Победа в раунде
                 elapsed = current_time - round_end_time
+
                 if elapsed < 3000:  # 5 секунд паузы
                     countdown = 3 - elapsed // 1000
                     winner_text = number_font.render(f"{winner} won the round!", True, WHITE)
@@ -309,6 +303,7 @@ def quit_game():
 
 def main_menu():
     clock = pygame.time.Clock()
+
     buttons = [
         Button(WIDTH // 2 - 100, 250, 200, 50, "Start game", start_game),
         Button(WIDTH // 2 - 100, 320, 200, 50, "Quit", quit_game)
