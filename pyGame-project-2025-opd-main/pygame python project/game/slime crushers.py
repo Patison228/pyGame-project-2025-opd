@@ -16,7 +16,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Slime crushers")
 
 # Загрузка изображений
-menu_background = load_background("pygame python project/image/main_menu_bg_1.jpg")
+menu_background = load_background("pygame python project/image/main_menu_bg.png")
 sky_background = load_background("pygame python project/image/bg_sky.jpg")
 
 def generate_platforms(map_type):
@@ -54,7 +54,6 @@ def generate_platforms(map_type):
         ]
 
     return platforms
-
 
 def game_loop(map_type):
     clock = pygame.time.Clock()
@@ -116,8 +115,7 @@ def game_loop(map_type):
                     musicManager.stop()  # Останавливаем музыку при выходе в меню
                     player2_wins = 0
                     player1_wins = 0
-                    final_winner = None
-                    return main_menu()
+                    return "menu"
                 elif event.key == pygame.K_b:  # Обработка нажатия B
                     if musicManager.current_music in musicManager.menu_music_list:
                         musicManager.next_menu_track()
@@ -215,32 +213,21 @@ def game_loop(map_type):
             if final_winner:
                 # Финальная победа
                 winner_text = number_font.render(f"{final_winner} won the game!", True, RED)
-                subtitle = number_font.render("Press any key to continue...", True, WHITE)
+                subtitle = number_font.render("Returning to main menu...", True, RED)
 
                 screen.blit(winner_text, (WIDTH // 2 - winner_text.get_width() // 2, HEIGHT // 2 - 50))
                 screen.blit(subtitle, (WIDTH // 2 - subtitle.get_width() // 2, HEIGHT // 2 + 20))
-                pygame.display.flip()
-
-                # Ждем нажатия любой клавиши
-                waiting = True
-                while waiting:
-                    for event in pygame.event.get():
-                        if event.type == pygame.QUIT:
-                            pygame.quit()
-                            sys.exit()
-                        elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-                            waiting = False
-
-                # Сбрасываем состояние игры
-                player1_wins = 0
                 player2_wins = 0
-                final_winner = None
-                musicManager.stop()
-                return main_menu()
+                player1_wins = 0
+                pygame.display.flip()
+                pygame.time.wait(3000)
+                musicManager.stop()  # Останавливаем музыку перед возвратом в меню
+                return "menu"
             else:
                 # Победа в раунде
                 elapsed = current_time - round_end_time
-                if elapsed < 3000:  # 3 секунды паузы
+
+                if elapsed < 3000:  # 5 секунд паузы
                     countdown = 3 - elapsed // 1000
                     winner_text = number_font.render(f"{winner} won the round!", True, WHITE)
                     countdown_text = number_font.render(f"Next round in {countdown}", True, WHITE)
@@ -271,6 +258,7 @@ def game_loop(map_type):
         clock.tick(FPS)
 
     return "menu"
+
 
 def select_map():
     clock = pygame.time.Clock()
@@ -315,7 +303,7 @@ def select_map():
 
         # Отрисовка
         screen.blit(menu_background, (0, 0))
-        title_text = title_font.render("Select Map", True, BLUE)
+        title_text = title_font.render("Select Map", True, WHITE)
         screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, 90))
 
         for button in buttons:
@@ -347,11 +335,9 @@ def start_game():
             musicManager.play_menu()
         return result
 
-
 def quit_game():
     pygame.quit()
     sys.exit()
-
 
 def main_menu():
     clock = pygame.time.Clock()
@@ -381,7 +367,7 @@ def main_menu():
             button.check_hover(mouse_pos)
 
         screen.blit(menu_background, (0, 0))
-        title_text = title_font.render("Slime crushers", True, BLUE)
+        title_text = title_font.render("Slime crushers", True, WHITE)
         screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, 150))
 
         for button in buttons:
@@ -392,7 +378,6 @@ def main_menu():
 
     pygame.quit()
     sys.exit()
-
 
 if __name__ == "__main__":
     main_menu()

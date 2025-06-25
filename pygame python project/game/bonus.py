@@ -16,11 +16,11 @@ class Bonus:
 
         # Загрузка спрайтов
         if self.type == "health":
-            self.image = load_image("C:/Users/Denis/Desktop/pyGame-project-2025-opd-main/pygame python project/image/health_bonus.png")
+            self.image = load_image("pygame python project/image/health_bonus.png")
         elif self.type == "damage":
-            self.image = load_image("C:/Users/Denis/Desktop/pyGame-project-2025-opd-main/pygame python project/image/damage_bonus.png")
+            self.image = load_image("pygame python project/image/damage_bonus.png")
         else:
-            self.image = load_image("C:/Users/Denis/Desktop/pyGame-project-2025-opd-main/pygame python project/image/protection_bonus.png")
+            self.image = load_image("pygame python project/image/protection_bonus.png")
 
     def check_collision(self, player):
         if self.collected:
@@ -42,7 +42,7 @@ class Bonus:
                 print(f"Player {player.player_id} got damage boost!")
             elif self.type == "protection":
                 shield_bonus_sound.play()
-                player.protection_count = 3
+                player.protection_count = 2
                 print(f"Player {player.player_id} got protection boost!")
             return True
         return False

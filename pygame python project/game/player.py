@@ -30,8 +30,8 @@ class Player:
     def load_sprites(self):
         try:
             self.sprite = load_image(PLAYER_SPRITES[self.player_id])
-            self.shield_sprite = load_image("C:/Users/Denis/Desktop/pyGame-project-2025-opd-main/pygame python project/image/shield.png")
-            self.icon_damage_boost_sprite = load_image("C:/Users/Denis/Desktop/pyGame-project-2025-opd-main/pygame python project/image/icon_damage_boost.png")
+            self.shield_sprite = load_image("pygame python project/image/shield.png")
+            self.icon_damage_boost_sprite = load_image("pygame python project/image/icon_damage_boost.png")
 
             if self.shield_sprite:
                 self.shield_sprite = pygame.transform.scale(self.shield_sprite, (self.rect.width + 8, self.rect.height + 8))
@@ -115,6 +115,7 @@ class Player:
                     self.bullets.remove(bullet)
                 else:
                     enemy.health -= bullet.damage
+                    
                     self.bullets.remove(bullet)
             elif bullet.is_out_of_screen():
                 self.bullets.remove(bullet)
@@ -135,7 +136,6 @@ class Player:
             self.protection_boost = False
 
     def draw_shield(self, surface):
-
         if self.shield_sprite:
             surface.blit(self.shield_sprite, (self.x - 4, self.y - 4))
         else:
